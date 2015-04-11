@@ -16,13 +16,10 @@
         <ul class="nav navbar-nav navbar-right">
           <?php if ($is_logged_in): ?>
             <li class="dropdown">
-              <a class="btn btn-link" href="<?php echo site_url('home')?>"><?php echo $_SESSION['user']['name']; ?></a>
+              <a class="btn btn-link" href="<?php echo site_url('home')?>">Profile</a>
             </li>
-            <li>   
-              <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><span class="fa fa-caret-down"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('auth/sign_out'); ?>">Sign out</a></li>
-              </ul>
+            <li>
+              <a href="<?php echo site_url('auth/sign_out'); ?>">Sign out</a>
             </li>
           <?php else: ?>
             <li><a href="<?php echo site_url('register'); ?>">Register</a></li>

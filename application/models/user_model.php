@@ -1,9 +1,21 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class User_Model extends CI_Model
+class User_Model extends MY_Model
 {
   protected $table = 'users';
   protected $pkey = 'id';
+
+  private $columns = array(
+      'id',
+      'password',
+      'email',
+      'name',
+      'last_name',
+      'time_zone',
+      'validated',
+      'register_date',
+      'last_login_date',
+    );
 
   public function __construct()
   {
@@ -30,12 +42,19 @@ class User_Model extends CI_Model
   */
   public function create($user)
   {
+    $code = $user['code'];
+    $user = $this->cleanse($user, $this->columns);
     $sql = "INSERT INTO users (email, password)
             VALUES ('" . strtolower($user['email']) . "', '" . $user['password'] . "')";
     
-    $this->db1->query($sql);
-    $user['id'] = $insert_id;
-    $this->pend_user($user);
+    if($this->db1->query($sql))
+    {
+      if($this->pend_user($user, $code))
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
   public function activate($user)
@@ -63,13 +82,10 @@ class User_Model extends CI_Model
       return TRUE;
     }
     return FALSE;
-
-    
   }
 
-  public function pend_user($user)
+  public function pend_user($user, $code)
   {
-    $code = $user['code'];
     $sql = "INSERT INTO users_pending (id, code)
             VALUES ('" . $user['id'] . "', '" . $code . "')
             ON DUPLICATE KEY UPDATE
